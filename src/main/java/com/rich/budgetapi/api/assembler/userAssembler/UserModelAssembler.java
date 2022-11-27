@@ -22,8 +22,8 @@ public class UserModelAssembler {
 
     public List<UserModel> toCollectionModel(List<User> users) {
         List<UserModel> usersModel = new ArrayList<>();
-        for (int i = 0; i < users.size(); i++) {
-            usersModel.add(toModel(users.get(i)));
+        for (User user : users) {
+            usersModel.add(toModel(user));
         }
 
         return usersModel;

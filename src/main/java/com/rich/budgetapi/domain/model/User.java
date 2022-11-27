@@ -1,5 +1,6 @@
 package com.rich.budgetapi.domain.model;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
@@ -35,7 +36,7 @@ public class User {
     private String photo;
 
     @Column(nullable = false)
-    private double balance;
+    private BigDecimal balance;
 
     @CreationTimestamp
     private OffsetDateTime registrationDate;
