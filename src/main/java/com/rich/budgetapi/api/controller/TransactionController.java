@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.flywaydb.core.internal.util.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -33,6 +34,7 @@ import com.rich.budgetapi.api.model.TransactionModel;
 import com.rich.budgetapi.api.model.input.TransactionInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.validation.ValidationException;
+import com.rich.budgetapi.domain.exception.InvalidValueException;
 import com.rich.budgetapi.domain.model.Transaction;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.model.enums.TypeTransaction;
@@ -71,34 +73,45 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<TransactionModel> toAdd(@RequestBody @Valid TransactionInputModel transactionInput) {
-        Transaction newTransaction = transactionInputModelDisassembler.toDomainObject(transactionInput);
+        try {
+            Transaction newTransaction = transactionInputModelDisassembler.toDomainObject(transactionInput);
 
-        newTransaction.setUser(new User());
-        newTransaction.getUser().setId(1L);
+            newTransaction.setUser(new User());
+            newTransaction.getUser().setId(1L);
 
-        verifyTypeTransaction(newTransaction);
+            transactionService.validateTransaction(newTransaction);
+            verifyTypeTransaction(newTransaction);
+            newTransaction = transactionService.toSave(newTransaction);
 
-        newTransaction = transactionService.toSave(newTransaction);
-
-        return ResponseEntity.created(ResourceUriHelper.addUriInResponseHeader(newTransaction.getCode()))
-                .body(transactionModelAssembler.toModel(newTransaction));
+            return ResponseEntity.created(ResourceUriHelper.addUriInResponseHeader(newTransaction.getCode()))
+                    .body(transactionModelAssembler.toModel(newTransaction));
+        } catch (DataIntegrityViolationException ex) {
+            throw new InvalidValueException(
+                    "Valor inválido. Verifique os valores disponíveis e informe um valor válido.");
+        }
     }
 
     @PatchMapping("/{transactionCode}")
     public ResponseEntity<TransactionModel> toPartialUpdate(@PathVariable String transactionCode,
             @RequestBody Map<String, Object> fields, HttpServletRequest request) {
-        Transaction transactionCurrent = transactionService.findOrFail(transactionCode);
+        try {
+            Transaction transactionCurrent = transactionService.findOrFail(transactionCode);
 
-        this.merge(fields, transactionCurrent, request);
-        validate(transactionCurrent, "transaction");
+            this.merge(fields, transactionCurrent, request);
+            validate(transactionCurrent, "transaction");
 
-        if (fields.containsKey("value")) {
-            verifyTypeTransaction(transactionCurrent);
+            if (fields.containsKey("value")) {
+                verifyTypeTransaction(transactionCurrent);
+            }
+
+            transactionService.validateTransaction(transactionCurrent);
+            transactionCurrent = transactionService.toSave(transactionCurrent);
+
+            return ResponseEntity.ok().body(transactionModelAssembler.toModel(transactionCurrent));
+        } catch (DataIntegrityViolationException ex) {
+            throw new InvalidValueException(
+                    "Valor inválido. Verifique os valores disponíveis e informe um valor válido.");
         }
-
-        transactionCurrent = transactionService.toSave(transactionCurrent);
-
-        return ResponseEntity.ok().body(transactionModelAssembler.toModel(transactionCurrent));
     }
 
     @DeleteMapping("/{transactionCode}")
@@ -111,7 +124,7 @@ public class TransactionController {
     private void verifyTypeTransaction(Transaction transaction) {
         BigDecimal balanceUser = transaction.getUser().getBalance();
 
-        if (TypeTransaction.EXPENSE.equals(transaction.getType())) {
+        if (transaction.getType().equals(TypeTransaction.EXPENSE)) {
             transaction.getUser().setBalance(
                     balanceUser.subtract(transaction.getValue()));
         } else {

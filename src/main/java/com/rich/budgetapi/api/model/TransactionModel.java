@@ -1,5 +1,6 @@
 package com.rich.budgetapi.api.model;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import com.rich.budgetapi.domain.model.Category;
@@ -13,9 +14,10 @@ import lombok.Setter;
 public class TransactionModel {
 
     private String code;
-    private UserModel user;
-    private TypeTransaction typeTransaction;
-    private Category category;
+    private BigDecimal value;
     private String description;
+    private TypeTransaction typeTransaction;
     private Date date;
+    private UserModel user;
+    private Category category;
 }

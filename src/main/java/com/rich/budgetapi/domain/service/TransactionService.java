@@ -3,10 +3,8 @@ package com.rich.budgetapi.domain.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.rich.budgetapi.domain.exception.InvalidValueException;
 import com.rich.budgetapi.domain.exception.TransactionNotFoundException;
 import com.rich.budgetapi.domain.model.Category;
 import com.rich.budgetapi.domain.model.Transaction;
@@ -27,14 +25,7 @@ public class TransactionService {
 
     @Transactional
     public Transaction toSave(Transaction newTransaction) {
-        try {
-            validateTransaction(newTransaction);
-
-            return transactionRepository.save(newTransaction);
-        } catch (DataIntegrityViolationException ex) {
-            throw new InvalidValueException(
-                    "Valor inválido. Verifique os valores disponíveis e informe um valor válido.");
-        }
+        return transactionRepository.save(newTransaction);
     }
 
     @Transactional
@@ -49,7 +40,7 @@ public class TransactionService {
                 .orElseThrow(() -> new TransactionNotFoundException(code));
     }
 
-    private void validateTransaction(Transaction transaction) {
+    public void validateTransaction(Transaction transaction) {
         Category category = categoryService.findOrFail(transaction.getCategory().getId());
         User user = userService.findOrFail(transaction.getUser().getId());
 
