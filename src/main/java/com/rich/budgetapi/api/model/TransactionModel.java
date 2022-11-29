@@ -1,6 +1,6 @@
 package com.rich.budgetapi.api.model;
 
-import java.time.OffsetDateTime;
+import java.sql.Date;
 
 import com.rich.budgetapi.domain.model.Category;
 import com.rich.budgetapi.domain.model.enums.TypeTransaction;
@@ -17,5 +17,5 @@ public class TransactionModel {
     private TypeTransaction typeTransaction;
     private Category category;
     private String description;
-    private OffsetDateTime date;
+    private Date date;
 }
