@@ -4,10 +4,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.MappingException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,31 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problemApi, new HttpHeaders(), httpStatus, req);
+    }
+
+    @ExceptionHandler(MappingException.class)
+    public ResponseEntity<Object> handleMappingException(MappingException ex, WebRequest req) {
+        ProblemApiType problemApiType = ProblemApiType.INVALID_DATA;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String detail = "Erro de conversão de data. Data deve estar no formato [yyyy-MM-dd].";
+        ProblemApi problemApi = instanceProblemApi(status, problemApiType, detail)
+                .userMessage(
+                        detail)
+                .build();
+
+        return handleExceptionInternal(ex, problemApi, new HttpHeaders(), status, req);
+    }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Object> handleInvalidParameter(InvalidDataAccessApiUsageException ex, WebRequest req) {
+        ProblemApiType problemApiType = ProblemApiType.INVALID_PARAMETER;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String detail = "Parâmetro(s) inválidos. Insira os valores no formato correto e tente novamente.";
+        ProblemApi problemApi = instanceProblemApi(status, problemApiType, ex.getMessage())
+                .userMessage(detail)
+                .build();
+
+        return handleExceptionInternal(ex, problemApi, new HttpHeaders(), status, req);
     }
 
     private ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,

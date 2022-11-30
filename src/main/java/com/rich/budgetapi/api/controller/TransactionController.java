@@ -35,11 +35,13 @@ import com.rich.budgetapi.api.model.input.TransactionInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.validation.ValidationException;
 import com.rich.budgetapi.domain.exception.InvalidValueException;
+import com.rich.budgetapi.domain.filter.TransactionFilter;
 import com.rich.budgetapi.domain.model.Transaction;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.model.enums.TypeTransaction;
 import com.rich.budgetapi.domain.repository.TransactionRepository;
 import com.rich.budgetapi.domain.service.TransactionService;
+import com.rich.budgetapi.infrasctruture.spec.TransactionSpec;
 
 @RestController
 @RequestMapping("/transactions")
@@ -61,8 +63,10 @@ public class TransactionController {
     private SmartValidator validator;
 
     @GetMapping
-    public ResponseEntity<List<TransactionModel>> toList() {
-        return ResponseEntity.ok().body(transactionModelAssembler.toCollectionModel(transactionRepository.findAll()));
+    public ResponseEntity<List<TransactionModel>> toSearch(TransactionFilter filter) {
+        return ResponseEntity.ok()
+                .body(transactionModelAssembler
+                        .toCollectionModel(transactionRepository.findAll(TransactionSpec.usingFilter(filter))));
     }
 
     @GetMapping("/{transactionCode}")
@@ -98,6 +102,7 @@ public class TransactionController {
             Transaction transactionCurrent = transactionService.findOrFail(transactionCode);
 
             this.merge(fields, transactionCurrent, request);
+
             validate(transactionCurrent, "transaction");
 
             if (fields.containsKey("value")) {

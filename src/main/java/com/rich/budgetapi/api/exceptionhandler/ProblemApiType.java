@@ -7,7 +7,8 @@ public enum ProblemApiType {
     RESOURCE_NOT_FOUND("Recurso não encontrado", "/recurso-nao-encontrado"),
     DOMAIN("Violação de regra de negócio", "/erro-dominio"),
     METHOD_ARGUMENT_TYPE_MISMATCH("Tipo de parâmetro imcompatível", "/parametro-imcompativel"),
-    INVALID_DATA("Dados inválidos", "/dados-invalidos");
+    INVALID_DATA("Dados inválidos", "/dados-invalidos"),
+    INVALID_PARAMETER("Parâmetros inválidos", "/parametros-invalidos");
 
     private String title;
     private String uri;

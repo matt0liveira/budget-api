@@ -1,11 +1,15 @@
 package com.rich.budgetapi.api.model.input;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +32,6 @@ public class TransactionInputModel {
     @NotBlank
     private String description;
 
-    @NotBlank
-    private String date;
+    @DateTimeFormat(iso = ISO.DATE)
+    private Date date;
 }
