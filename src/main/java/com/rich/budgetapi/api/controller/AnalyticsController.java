@@ -13,6 +13,8 @@ import com.rich.budgetapi.domain.filter.TransactionFilter;
 import com.rich.budgetapi.domain.model.dto.TotalTransactions;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByCurdate;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByDate;
+import com.rich.budgetapi.domain.model.dto.TotalTransactionsByMonth;
+import com.rich.budgetapi.domain.model.dto.TotalTransactionsByWeekCurrent;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsLastFourYears;
 import com.rich.budgetapi.domain.service.TransactionsAnalyticsQueryService;
 
@@ -44,6 +46,18 @@ public class AnalyticsController {
     public ResponseEntity<List<TotalTransactionsByCurdate>> queryTotalTransactionsByCurdate(
             TotalTransactionsWithoutDateFilter filter) {
         return ResponseEntity.ok().body(transactionsAnalyticsService.queryTotalTransactionsByCurdate(filter));
+    }
+
+    @GetMapping("/total-transactions-by-month")
+    public ResponseEntity<List<TotalTransactionsByMonth>> queryTotalTransactionsByMonths(
+            TotalTransactionsWithoutDateFilter filter) {
+        return ResponseEntity.ok().body(transactionsAnalyticsService.queryTotalTransactionsByMonths(filter));
+    }
+
+    @GetMapping("/total-transactions-by-week-current")
+    public ResponseEntity<List<TotalTransactionsByWeekCurrent>> queryTotalTransactionsByWeekCurrent(
+            TotalTransactionsWithoutDateFilter filter) {
+        return ResponseEntity.ok().body(transactionsAnalyticsService.queryTotalTransactionsByWeekCurrent(filter));
     }
 
 }

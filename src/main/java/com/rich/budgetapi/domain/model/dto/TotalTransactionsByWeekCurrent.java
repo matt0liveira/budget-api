@@ -9,10 +9,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class TotalTransactionsByMonth {
+public class TotalTransactionsByWeekCurrent {
 
-    private String monthName;
-    private Integer monthNumber;
+    private String dayName;
+    private Integer dayNumber;
     private Long totalTransactions;
     private BigDecimal totalValue;
 }

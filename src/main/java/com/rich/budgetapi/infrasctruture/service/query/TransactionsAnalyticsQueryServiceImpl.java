@@ -1,6 +1,7 @@
 package com.rich.budgetapi.infrasctruture.service.query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.rich.budgetapi.domain.model.dto.TotalTransactions;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByCurdate;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByDate;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByMonth;
+import com.rich.budgetapi.domain.model.dto.TotalTransactionsByWeekCurrent;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsLastFourYears;
 import com.rich.budgetapi.domain.service.TransactionsAnalyticsQueryService;
 
@@ -99,7 +101,8 @@ public class TransactionsAnalyticsQueryServiceImpl implements TransactionsAnalyt
     }
 
     @Override
-    public List<TotalTransactionsByCurdate> queryTotalTransactionsByCurdate(TotalTransactionsWithoutDateFilter filter) {
+    public List<TotalTransactionsByCurdate> queryTotalTransactionsByCurdate(
+            TotalTransactionsWithoutDateFilter filter) {
         var builder = manager.getCriteriaBuilder();
         var query = builder.createQuery(TotalTransactionsByCurdate.class);
         var root = query.from(Transaction.class);
@@ -122,9 +125,67 @@ public class TransactionsAnalyticsQueryServiceImpl implements TransactionsAnalyt
     }
 
     @Override
-    public List<TotalTransactionsByMonth> queryTotalTransactionsByMonths(TotalTransactionsWithoutDateFilter filter) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<TotalTransactionsByMonth> queryTotalTransactionsByMonths(
+            TotalTransactionsWithoutDateFilter filter) {
+        var builder = manager.getCriteriaBuilder();
+        var query = builder.createQuery(TotalTransactionsByMonth.class);
+        var root = query.from(Transaction.class);
+        var predicates = new ArrayList<Predicate>();
+
+        var functionMonthName = builder.function("monthname", String.class, root.get("date"));
+        var functionMonth = builder.function("month", Integer.class, root.get("date"));
+
+        var selection = builder.construct(TotalTransactionsByMonth.class,
+                functionMonthName,
+                functionMonth,
+                builder.count(root.get("id")),
+                builder.sum(root.get("value")));
+
+        addPredicatesWithoutDate(filter, builder, root, predicates);
+
+        List<Integer> months = Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
+        predicates.add(functionMonth.in(months));
+
+        query.select(selection);
+        query.where(predicates.toArray(new Predicate[0]));
+        query.groupBy(functionMonth);
+
+        return manager.createQuery(query).getResultList();
+    }
+
+    @Override
+    public List<TotalTransactionsByWeekCurrent> queryTotalTransactionsByWeekCurrent(
+            TotalTransactionsWithoutDateFilter filter) {
+        var builder = manager.getCriteriaBuilder();
+        var query = builder.createQuery(TotalTransactionsByWeekCurrent.class);
+        var root = query.from(Transaction.class);
+        var predicates = new ArrayList<Predicate>();
+
+        var functionDayName = builder.function("dayname", String.class, root.get("date"));
+        var functionDayOfWeek = builder.function("dayofweek", Integer.class, root.get("date"));
+        var functionYearWeekOfFieldDate = builder.function("yearweek", Long.class,
+                root.get("date"),
+                builder.literal(0));
+        var functionCurdate = builder.function("curdate", Date.class);
+        var functionYearWeekOfCurdate = builder.function("yearweek", Long.class,
+                functionCurdate,
+                builder.literal(0));
+
+        var selection = builder.construct(TotalTransactionsByWeekCurrent.class,
+                functionDayName,
+                functionDayOfWeek,
+                builder.count(root.get("id")),
+                builder.sum(root.get("value")));
+
+        addPredicatesWithoutDate(filter, builder, root, predicates);
+
+        predicates.add(builder.equal(functionYearWeekOfFieldDate, functionYearWeekOfCurdate));
+
+        query.select(selection);
+        query.where(predicates.toArray(new Predicate[0]));
+        query.groupBy(functionDayOfWeek);
+
+        return manager.createQuery(query).getResultList();
     }
 
     private void addPredicatesWithDate(TransactionFilter filter, CriteriaBuilder builder,

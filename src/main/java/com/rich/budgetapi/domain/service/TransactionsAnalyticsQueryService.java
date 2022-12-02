@@ -8,6 +8,7 @@ import com.rich.budgetapi.domain.model.dto.TotalTransactions;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByCurdate;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByDate;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsByMonth;
+import com.rich.budgetapi.domain.model.dto.TotalTransactionsByWeekCurrent;
 import com.rich.budgetapi.domain.model.dto.TotalTransactionsLastFourYears;
 
 public interface TransactionsAnalyticsQueryService {
@@ -21,4 +22,6 @@ public interface TransactionsAnalyticsQueryService {
     List<TotalTransactionsByCurdate> queryTotalTransactionsByCurdate(TotalTransactionsWithoutDateFilter filter);
 
     List<TotalTransactionsByMonth> queryTotalTransactionsByMonths(TotalTransactionsWithoutDateFilter filter);
+
+    List<TotalTransactionsByWeekCurrent> queryTotalTransactionsByWeekCurrent(TotalTransactionsWithoutDateFilter filter);
 }
