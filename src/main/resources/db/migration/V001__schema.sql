@@ -1,13 +1,6 @@
 CREATE DATABASE IF NOT EXISTS budget;
 USE budget;
 
-CREATE TABLE IF NOT EXISTS `category` (
-    `id` bigint NOT NULL AUTO_INCREMENT,
-    `color` varchar(255) NOT NULL,
-    `description` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE IF NOT EXISTS `user` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `balance` double NOT NULL,
@@ -18,6 +11,14 @@ CREATE TABLE IF NOT EXISTS `user` (
     `registration_date` datetime(6) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `category` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `color` varchar(255) NOT NULL,
+    `description` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE IF NOT EXISTS `transaction` (
     `id` bigint NOT NULL AUTO_INCREMENT,

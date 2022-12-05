@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rich.budgetapi.api.assembler.userAssembler.UserInputModelDisassembler;
 import com.rich.budgetapi.api.assembler.userAssembler.UserModelAssembler;
 import com.rich.budgetapi.api.model.UserModel;
+import com.rich.budgetapi.api.model.input.ChangePasswordInputModel;
 import com.rich.budgetapi.api.model.input.UserInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.domain.model.User;
@@ -77,6 +78,16 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> toRemove(@PathVariable Long userId) {
         userService.toRemove(userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/change-password/{userId}")
+    public ResponseEntity<Void> toChangePassword(@PathVariable Long userId,
+            @RequestBody @Valid ChangePasswordInputModel changePasswordInput) {
+
+        userService.toChangePassword(userId, changePasswordInput.getPasswordCurrent(),
+                changePasswordInput.getNewPassword());
 
         return ResponseEntity.noContent().build();
     }

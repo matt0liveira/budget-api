@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -155,6 +156,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .title(problemApiType.getTitle())
                 .detail(detail)
                 .timestamp(OffsetDateTime.now());
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ProblemApiType problemApiType = ProblemApiType.MEDIA_TYPE_NOT_SUPPORTED;
+        ProblemApi problemApi = instanceProblemApi(status, problemApiType, ex.getMessage())
+                .userMessage("Tipo de mídia não suportada. Insira no formato correto (JSON) e tente novamente.")
+                .build();
+
+        return handleExceptionInternal(ex, problemApi, headers, status, request);
     }
 
     @Override

@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserModel {
+public class GroupModel {
 
     private Long id;
     private String name;
-    private String email;
 }

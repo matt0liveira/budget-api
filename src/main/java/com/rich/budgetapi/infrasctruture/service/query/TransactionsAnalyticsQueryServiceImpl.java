@@ -87,11 +87,14 @@ public class TransactionsAnalyticsQueryServiceImpl implements TransactionsAnalyt
 
         addPredicatesWithoutDate(filter, builder, root, predicates);
 
-        // var functionCurdate = builder.function("curdate", Date.class);
-        // var functionYearWithCurdate = builder.function("year", Integer.class,
-        // functionCurdate);
-        // predicates.add(functionYear.in(functionYearWithCurdate,
-        // functionYearWithCurdate));
+        var functionCurdate = builder.function("curdate", Date.class);
+        var functionSubDate = builder.function("subdate", Date.class, functionCurdate, builder.literal(1460));
+        // var functionDateSub = builder.function("date_sub", Date.class,
+        // functionCurdate,
+        // new LiteralExpression<>(null, null, null));
+
+        predicates.add(builder.between(root.get("date"), functionSubDate,
+                functionCurdate));
 
         query.select(selection);
         query.where(predicates.toArray(new Predicate[0]));

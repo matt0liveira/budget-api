@@ -8,7 +8,8 @@ public enum ProblemApiType {
     DOMAIN("Violação de regra de negócio", "/erro-dominio"),
     METHOD_ARGUMENT_TYPE_MISMATCH("Tipo de parâmetro imcompatível", "/parametro-imcompativel"),
     INVALID_DATA("Dados inválidos", "/dados-invalidos"),
-    INVALID_PARAMETER("Parâmetros inválidos", "/parametros-invalidos");
+    INVALID_PARAMETER("Parâmetros inválidos", "/parametros-invalidos"),
+    MEDIA_TYPE_NOT_SUPPORTED("Tipo de mídia não suportada", "/tipo-de-midia-nao-suportada");
 
     private String title;
     private String uri;
