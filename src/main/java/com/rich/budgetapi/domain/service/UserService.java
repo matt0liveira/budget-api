@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.rich.budgetapi.domain.exception.DomainException;
 import com.rich.budgetapi.domain.exception.UserNotFoundException;
+import com.rich.budgetapi.domain.model.Profile;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.repository.UserRepository;
 
@@ -17,6 +18,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProfileService profileService;
 
     @Transactional
     public User toSave(User newUser) {
@@ -46,6 +50,22 @@ public class UserService {
         }
 
         user.setPassword(newPassword);
+    }
+
+    @Transactional
+    public void connectProfile(Long userId, Long profileId) {
+        User user = findOrFail(userId);
+        Profile profile = profileService.findOrfail(profileId);
+
+        user.connectProfile(profile);
+    }
+
+    @Transactional
+    public void disassociateProfile(Long userId, Long profileId) {
+        User user = findOrFail(userId);
+        Profile profile = profileService.findOrfail(profileId);
+
+        user.disassociateProfile(profile);
     }
 
     public User findOrFail(Long userId) {

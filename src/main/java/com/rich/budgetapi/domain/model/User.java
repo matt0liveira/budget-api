@@ -38,15 +38,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String photo;
-
     @Column(nullable = false)
     private BigDecimal balance;
 
     @ManyToMany
-    @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
-    private Set<Group> groups = new HashSet<>();
+    @JoinTable(name = "user_profile", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "profile_id"))
+    private Set<Profile> profiles = new HashSet<>();
 
     @CreationTimestamp
     private OffsetDateTime registrationDate;
+
+    public void connectProfile(Profile profile) {
+        getProfiles().add(profile);
+    }
+
+    public void disassociateProfile(Profile profile) {
+        getProfiles().remove(profile);
+    }
 }

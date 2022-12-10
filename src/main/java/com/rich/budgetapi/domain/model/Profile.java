@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Group {
+public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,14 @@ public class Group {
     private String name;
 
     @ManyToMany
-    @JoinTable(name = "group_permission", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    @JoinTable(name = "profile_permission", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> permissions = new ArrayList<>();
+
+    public boolean connectPermission(Permission permission) {
+        return getPermissions().add(permission);
+    }
+
+    public boolean disassociatePermission(Permission permission) {
+        return getPermissions().remove(permission);
+    }
 }

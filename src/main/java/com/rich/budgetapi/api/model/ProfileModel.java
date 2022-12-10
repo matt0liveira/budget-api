@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class GroupModel {
+public class ProfileModel {
 
     private Long id;
     private String name;
