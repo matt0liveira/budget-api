@@ -41,7 +41,7 @@ public interface PhotoStorageService {
 
     @Builder
     @Getter
-    class RetrievedPhoto {
+    public class RetrievedPhoto {
         private String url;
         private InputStream inputStream;
 

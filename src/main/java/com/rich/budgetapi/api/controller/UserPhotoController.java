@@ -1,12 +1,18 @@
 package com.rich.budgetapi.api.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,14 +25,20 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rich.budgetapi.api.assembler.photoUserAssembler.PhotoUserModelAssembler;
 import com.rich.budgetapi.api.model.PhotoUserModel;
 import com.rich.budgetapi.api.model.input.PhotoUserInputModel;
+import com.rich.budgetapi.domain.exception.EntityNotfoundException;
 import com.rich.budgetapi.domain.model.PhotoUser;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.service.GalleryPhotoUserService;
+import com.rich.budgetapi.domain.service.PhotoStorageService;
+import com.rich.budgetapi.domain.service.PhotoStorageService.RetrievedPhoto;
 import com.rich.budgetapi.domain.service.UserService;
 
 @RestController
 @RequestMapping("/users/{userId}/photo")
 public class UserPhotoController {
+
+    @Autowired
+    private PhotoStorageService photoStorageService;
 
     @Autowired
     private GalleryPhotoUserService galleryPhotoUser;
@@ -57,14 +69,55 @@ public class UserPhotoController {
     }
 
     @GetMapping(produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<PhotoUserModel> toFind(@PathVariable Long userId,
-            @RequestHeader(name = "accept") String acceptHeader) {
+    public ResponseEntity<?> toFind(@PathVariable Long userId,
+            @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
         if (acceptHeader.equals(MediaType.APPLICATION_JSON_VALUE)) {
             return ResponseEntity
                     .ok()
                     .body(photoUserModelAssembler.toModel(galleryPhotoUser.findOrFail(userId)));
         }
 
-        return null;
+        try {
+
+            PhotoUser photo = galleryPhotoUser.findOrFail(userId);
+            MediaType mediaTypePhoto = MediaType.parseMediaType(photo.getContentType());
+            List<MediaType> mediaTypeAccepts = MediaType.parseMediaTypes(acceptHeader);
+
+            verifyCompatibilityMediaType(mediaTypePhoto, mediaTypeAccepts);
+
+            RetrievedPhoto retrievedPhoto = photoStorageService.retrieve(photo.getFileName());
+
+            if (retrievedPhoto.hasUrl()) {
+                return ResponseEntity
+                        .status(HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, retrievedPhoto.getUrl())
+                        .build();
+            } else {
+                return ResponseEntity
+                        .ok()
+                        .contentType(mediaTypePhoto)
+                        .body(new InputStreamResource(retrievedPhoto.getInputStream()));
+            }
+        } catch (EntityNotfoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> toRemove(@PathVariable Long userId) {
+        galleryPhotoUser.toRemove(userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private void verifyCompatibilityMediaType(MediaType mediaTypePhoto, List<MediaType> mediaTypeAccepts)
+            throws HttpMediaTypeNotAcceptableException {
+        boolean compatible = mediaTypeAccepts
+                .stream()
+                .anyMatch(mediaTypeAccept -> mediaTypeAccept.isCompatibleWith(mediaTypePhoto));
+
+        if (!compatible) {
+            throw new HttpMediaTypeNotAcceptableException(mediaTypeAccepts);
+        }
     }
 }
