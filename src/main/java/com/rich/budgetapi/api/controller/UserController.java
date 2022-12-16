@@ -21,6 +21,7 @@ import com.rich.budgetapi.api.model.UserModel;
 import com.rich.budgetapi.api.model.input.ChangePasswordInputModel;
 import com.rich.budgetapi.api.model.input.UserInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.repository.UserRepository;
 import com.rich.budgetapi.domain.service.UserService;
@@ -41,6 +42,7 @@ public class UserController {
     @Autowired
     private UserInputModelDisassembler userInputModelDisassembler;
 
+    @CheckSecurity.Users.CanConsult
     @GetMapping
     public ResponseEntity<List<UserModel>> toList() {
         List<UserModel> users = userAssembler.toCollectionModel(userRepository.findAll());

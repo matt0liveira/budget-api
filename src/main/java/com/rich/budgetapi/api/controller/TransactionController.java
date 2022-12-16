@@ -33,6 +33,7 @@ import com.rich.budgetapi.api.assembler.transactionAssembler.TransactionModelAss
 import com.rich.budgetapi.api.model.TransactionModel;
 import com.rich.budgetapi.api.model.input.TransactionInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.SecurityUtils;
 import com.rich.budgetapi.core.validation.ValidationException;
 import com.rich.budgetapi.domain.exception.InvalidValueException;
 import com.rich.budgetapi.domain.filter.TransactionFilter;
@@ -62,6 +63,9 @@ public class TransactionController {
     @Autowired
     private SmartValidator validator;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @GetMapping
     public ResponseEntity<List<TransactionModel>> toSearch(TransactionFilter filter) {
         return ResponseEntity.ok()
@@ -81,7 +85,7 @@ public class TransactionController {
             Transaction newTransaction = transactionInputModelDisassembler.toDomainObject(transactionInput);
 
             newTransaction.setUser(new User());
-            newTransaction.getUser().setId(1L);
+            newTransaction.getUser().setId(securityUtils.getUserIdAuthenticated());
 
             transactionService.validateTransaction(newTransaction);
             verifyTypeTransaction(newTransaction);

@@ -55,4 +55,8 @@ public class User {
     public void disassociateProfile(Profile profile) {
         getProfiles().remove(profile);
     }
+
+    public boolean isNew() {
+        return getId() == null;
+    }
 }

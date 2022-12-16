@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.rich.budgetapi.domain.exception.DomainException;
@@ -22,6 +23,9 @@ public class UserService {
     @Autowired
     private ProfileService profileService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     public User toSave(User newUser) {
         Optional<User> userExists = userRepository.findByEmail(newUser.getEmail());
@@ -29,6 +33,10 @@ public class UserService {
         if (userExists.isPresent() && !userExists.get().equals(newUser)) {
             throw new DomainException(
                     String.format("Já existe um usuário com o e-mail %s cadastrado", newUser.getEmail()));
+        }
+
+        if (newUser.isNew()) {
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         }
 
         return userRepository.save(newUser);
@@ -45,11 +53,11 @@ public class UserService {
     public void toChangePassword(Long userId, String passwordCurrent, String newPassword) {
         User user = findOrFail(userId);
 
-        if (!passwordCurrent.equals(user.getPassword())) {
+        if (!passwordEncoder.matches(passwordCurrent, user.getPassword())) {
             throw new DomainException("Senha atual incorreta. Insira a senha atual correta e tente novamente.");
         }
 
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 
     @Transactional

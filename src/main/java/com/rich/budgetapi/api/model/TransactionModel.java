@@ -3,7 +3,6 @@ package com.rich.budgetapi.api.model;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-import com.rich.budgetapi.domain.model.Category;
 import com.rich.budgetapi.domain.model.enums.TypeTransaction;
 
 import lombok.Getter;
@@ -19,5 +18,5 @@ public class TransactionModel {
     private TypeTransaction typeTransaction;
     private Date date;
     private UserModel user;
-    private Category category;
+    private CategoryModel category;
 }

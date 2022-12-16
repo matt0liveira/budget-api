@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.rich.budgetapi.domain.model.Transaction;
+import com.rich.budgetapi.domain.model.User;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
@@ -16,4 +17,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
     @Query("from Transaction t join fetch t.category join fetch t.user")
     List<Transaction> findAll();
+
+    List<Transaction> findByUser(User user);
 }

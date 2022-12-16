@@ -44,6 +44,26 @@
       "name": "budget.storage.s3.access-key-secret",
       "type": "java.lang.String",
       "description": "A description for 'budget.storage.s3.access-key-secret'"
+    },
+    {
+      "name": "budget.jwt.keystore.jks-location",
+      "type": "java.lang.String",
+      "description": "A description for 'budget.jwt.keystore.jks-location'"
+    },
+    {
+      "name": "budget.jwt.keystore.alias",
+      "type": "java.lang.String",
+      "description": "A description for 'budget.jwt.keystore.alias'"
+    },
+    {
+      "name": "budget.jwt.keystore.password",
+      "type": "java.lang.String",
+      "description": "A description for 'budget.jwt.keystore.password'"
+    },
+    {
+      "name": "budget.auth.provider-url",
+      "type": "java.lang.String",
+      "description": "A description for 'budget.auth.provider-url'"
     }
   ]
 }

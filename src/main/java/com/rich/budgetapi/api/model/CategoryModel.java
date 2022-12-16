@@ -9,5 +9,4 @@ public class CategoryModel {
 
     private Long id;
     private String description;
-    private UserModel user;
 }
