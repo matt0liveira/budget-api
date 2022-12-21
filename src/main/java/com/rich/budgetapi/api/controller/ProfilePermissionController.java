@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.permissionAssembler.PermissionModelAssembler;
 import com.rich.budgetapi.api.model.PermissionModel;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.PermissionNotFoundException;
 import com.rich.budgetapi.domain.model.Permission;
 import com.rich.budgetapi.domain.model.Profile;
@@ -23,9 +24,6 @@ import com.rich.budgetapi.domain.service.ProfileService;
 @RequestMapping("/profiles/{profileId}/permissions")
 public class ProfilePermissionController {
 
-    // @Autowired
-    // private ProfileRepository profileRepository;
-
     @Autowired
     private ProfileService profileService;
 
@@ -35,6 +33,7 @@ public class ProfilePermissionController {
     @Autowired
     private PermissionModelAssembler permissionModelAssembler;
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping
     public ResponseEntity<List<PermissionModel>> toList(@PathVariable Long profileId) {
         Profile profile = profileService.findOrfail(profileId);
@@ -44,6 +43,7 @@ public class ProfilePermissionController {
                 .body(permissionModelAssembler.toCollectionModel(profile.getPermissions()));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping("/{permissionId}")
     public ResponseEntity<PermissionModel> toFind(@PathVariable Long profileId, @PathVariable Long permissionId) {
         Profile profile = profileService.findOrfail(profileId);
@@ -58,6 +58,7 @@ public class ProfilePermissionController {
                 .body(permissionModelAssembler.toModel(permission));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PutMapping("/{permissionId}")
     public ResponseEntity<Void> toConnect(@PathVariable Long profileId, @PathVariable Long permissionId) {
         profileService.connectPermission(profileId, permissionId);
@@ -67,6 +68,7 @@ public class ProfilePermissionController {
                 .build();
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @DeleteMapping("/{permissionId}")
     public ResponseEntity<Void> toDisassociate(@PathVariable Long profileId, @PathVariable Long permissionId) {
         profileService.disassociatePermission(profileId, permissionId);

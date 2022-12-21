@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.profileAssembler.ProfileModelAssembler;
 import com.rich.budgetapi.api.model.ProfileModel;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.ProfileNotFoundException;
 import com.rich.budgetapi.domain.model.Profile;
 import com.rich.budgetapi.domain.model.User;
@@ -33,6 +34,7 @@ public class UserProfileController {
     @Autowired
     private ProfileModelAssembler profileModelAssembler;
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping
     public ResponseEntity<List<ProfileModel>> toList(@PathVariable Long userId) {
         User user = userService.findOrFail(userId);
@@ -42,6 +44,7 @@ public class UserProfileController {
         return ResponseEntity.ok().body(profileModelAssembler.toCollectionModel(profiles));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileModel> toFind(@PathVariable Long userId, @PathVariable Long profileId) {
         User user = userService.findOrFail(userId);
@@ -54,6 +57,7 @@ public class UserProfileController {
         return ResponseEntity.ok().body(profileModelAssembler.toModel(profile));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PutMapping("/{profileId}")
     public ResponseEntity<Void> connectProfile(@PathVariable Long userId, @PathVariable Long profileId) {
         userService.connectProfile(userId, profileId);
@@ -61,6 +65,7 @@ public class UserProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @DeleteMapping("/{profileId}")
     public ResponseEntity<Void> disassociateProfile(@PathVariable Long userId, @PathVariable Long profileId) {
         userService.disassociateProfile(userId, profileId);

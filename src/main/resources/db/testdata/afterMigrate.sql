@@ -14,13 +14,15 @@ SET foreign_key_checks = 1;
 
 insert into user (name, email, password, balance) values ('Maria Joaquina', 'maria.joaquina@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 1000);
 insert into user (name, email, password, balance) values ('Cirilo', 'cirilo@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 1250);
+insert into user (name, email, password, balance) values ('Roberta', 'roberta@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 3000);
 
 insert into category (description, color, user_id) values ('Saúde','#06C8F3', 1);
 insert into category (description, color, user_id) values ('Alimentação','#06F343', 1);
 insert into category (description, color, user_id) values ('Lazer','#EFF306', 2);
 
 insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('24faa01b-c97b-47a6-be67-b054bfe78d55', 150, 1, 'EXPENSE', 1, 'Remédios para gripe', curdate(), utc_timestamp);
-insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('24faa01b-c97b-47a6-be67-b054bfe78d55', 65, 2, 'EXPENSE', 2, 'Noite da pizza', curdate(), utc_timestamp);
+insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('a9f7a3f0-3dc1-46de-b254-7b02ae13926d', 65, 2, 'EXPENSE', 2, 'Noite da pizza', curdate(), utc_timestamp);
+insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('f0e253fd-434c-40d0-9fff-65314af9c138', 65, 3, 'EXPENSE', 2, 'Noite da pizza', curdate(), utc_timestamp);
 
 insert into permission (id, name, description) values (1, 'CHANGE_USERS_PROFILES_PERMISSIONS', 'Allows creation, changing and deleting of users');
 insert into permission (id, name, description) values (2, 'CHANGE_CATEGORIES', 'Allows creation, changing and deleting of categories');

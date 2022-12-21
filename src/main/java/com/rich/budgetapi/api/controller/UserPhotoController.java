@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rich.budgetapi.api.assembler.photoUserAssembler.PhotoUserModelAssembler;
 import com.rich.budgetapi.api.model.PhotoUserModel;
 import com.rich.budgetapi.api.model.input.PhotoUserInputModel;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.EntityNotfoundException;
 import com.rich.budgetapi.domain.model.PhotoUser;
 import com.rich.budgetapi.domain.model.User;
@@ -49,6 +50,7 @@ public class UserPhotoController {
     @Autowired
     private PhotoUserModelAssembler photoUserModelAssembler;
 
+    @CheckSecurity.UsersProfilesPermissions.CanChangeUser
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoUserModel> toUpdate(@PathVariable Long userId,
             @Valid PhotoUserInputModel photoUserInput, @RequestPart(required = true) MultipartFile file)
@@ -68,6 +70,7 @@ public class UserPhotoController {
                 .body(photoUserModelAssembler.toModel(photoSaved));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsultUser
     @GetMapping(produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> toFind(@PathVariable Long userId,
             @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
@@ -103,6 +106,7 @@ public class UserPhotoController {
         }
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChangeUser
     @DeleteMapping
     public ResponseEntity<Void> toRemove(@PathVariable Long userId) {
         galleryPhotoUser.toRemove(userId);

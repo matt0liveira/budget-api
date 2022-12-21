@@ -20,6 +20,7 @@ import com.rich.budgetapi.api.assembler.permissionAssembler.PermissionModelAssem
 import com.rich.budgetapi.api.model.PermissionModel;
 import com.rich.budgetapi.api.model.input.PermissionInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.Permission;
 import com.rich.budgetapi.domain.repository.PermissionRepository;
 import com.rich.budgetapi.domain.service.PermissionService;
@@ -40,16 +41,19 @@ public class PermissionController {
     @Autowired
     private PermissionInputModelDisassembler permissionInputModelDisassembler;
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping
     public ResponseEntity<List<PermissionModel>> toList() {
         return ResponseEntity.ok().body(permissionModelAssembler.toCollectionModel(permissionRepository.findAll()));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping("/{permissionId}")
     public ResponseEntity<PermissionModel> toFind(@PathVariable Long permissionId) {
         return ResponseEntity.ok().body(permissionModelAssembler.toModel(permissionService.findOrFail(permissionId)));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PostMapping
     public ResponseEntity<PermissionModel> toAdd(@RequestBody @Valid PermissionInputModel permissionInput) {
         Permission newPermission = permissionInputModelDisassembler.toDomainObject(permissionInput);
@@ -61,6 +65,7 @@ public class PermissionController {
                 .body(permissionModelAssembler.toModel(newPermission));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PutMapping("/{permissionId}")
     public ResponseEntity<PermissionModel> toUpdate(@PathVariable Long permissionId,
             @RequestBody @Valid PermissionInputModel permissionInput) {
@@ -75,6 +80,7 @@ public class PermissionController {
                 .body(permissionModelAssembler.toModel(permissionCurrent));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @DeleteMapping("/{permissionId}")
     public ResponseEntity<Void> toRemove(@PathVariable Long permissionId) {
         permissionService.toRemove(permissionId);

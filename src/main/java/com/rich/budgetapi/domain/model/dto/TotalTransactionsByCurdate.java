@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TotalTransactionsByCurdate {
-    private Date curdate;
+    private Date currentDate;
     private Long totalTransactions;
     private BigDecimal totalValue;
 }

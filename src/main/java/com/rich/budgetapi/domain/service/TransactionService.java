@@ -29,8 +29,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void toRemove(String transactionCode) {
-        Transaction transaction = findOrFail(transactionCode);
+    public void toRemove(Transaction transaction) {
 
         transactionRepository.delete(transaction);
     }

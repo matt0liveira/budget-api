@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.categoryAssembler.CategoryInputModelDisassembler;
 import com.rich.budgetapi.api.assembler.categoryAssembler.CategoryModelAssembler;
-import com.rich.budgetapi.api.model.CategoryModel;
+import com.rich.budgetapi.api.model.CategoryModelWithUser;
 import com.rich.budgetapi.api.model.input.CategoryInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.CheckSecurity;
+import com.rich.budgetapi.core.security.SecurityUtils;
 import com.rich.budgetapi.domain.model.Category;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.repository.CategoryRepository;
@@ -42,35 +44,43 @@ public class CategoryController {
     @Autowired
     private CategoryInputModelDisassembler categoryInputDisassembler;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @CheckSecurity.Categories.CanConsult
     @GetMapping
-    public ResponseEntity<List<CategoryModel>> toList() {
+    public ResponseEntity<List<CategoryModelWithUser>> toList() {
         return ResponseEntity.ok().body(categoryModelAssembler.toCollectionModel(categoryRepository.findAll()));
     }
 
+    @CheckSecurity.Categories.CanFind
     @GetMapping("/{categoryId}")
-    public ResponseEntity<CategoryModel> toFind(@PathVariable Long categoryId) {
-        return ResponseEntity.ok().body(categoryModelAssembler.toModel(categoryService.findOrFail(categoryId)));
+    public CategoryModelWithUser toFind(@PathVariable Long categoryId) {
+        return categoryModelAssembler.toModel(categoryService.findOrFail(categoryId));
     }
 
+    @CheckSecurity.Categories.CanConsultByUser
     @GetMapping("/by-user/{userId}")
-    public ResponseEntity<List<CategoryModel>> toFindByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<CategoryModelWithUser>> toFindByUser(@PathVariable Long userId) {
         return ResponseEntity.ok()
                 .body(categoryModelAssembler.toCollectionModel(categoryRepository.findByUserId(userId)));
     }
 
     @GetMapping("/by-description")
-    public ResponseEntity<List<CategoryModel>> toFindByDescription(@RequestParam(required = true) String description) {
+    public ResponseEntity<List<CategoryModelWithUser>> toFindByDescription(
+            @RequestParam(required = true) String description) {
         List<Category> categories = categoryRepository.findByDescriptionLike("%" + description + "%");
 
         return ResponseEntity.ok().body(categoryModelAssembler.toCollectionModel(categories));
     }
 
+    @CheckSecurity.Categories.CanAdd
     @PostMapping
-    public ResponseEntity<CategoryModel> toAdd(@RequestBody @Valid CategoryInputModel categoryInput) {
+    public ResponseEntity<CategoryModelWithUser> toAdd(@RequestBody @Valid CategoryInputModel categoryInput) {
         Category newCategory = categoryInputDisassembler.toDomainObject(categoryInput);
 
         newCategory.setUser(new User());
-        newCategory.getUser().setId(1L);
+        newCategory.getUser().setId(securityUtils.getUserIdAuthenticated());
 
         newCategory = categoryService.toSave(newCategory);
 
@@ -80,7 +90,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryModel> toUpdate(@PathVariable Long categoryId,
+    public ResponseEntity<CategoryModelWithUser> toUpdate(@PathVariable Long categoryId,
             @RequestBody @Valid CategoryInputModel categoryInput) {
         Category categoryCurrent = categoryService.findOrFail(categoryId);
 

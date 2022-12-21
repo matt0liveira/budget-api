@@ -20,6 +20,7 @@ import com.rich.budgetapi.api.assembler.profileAssembler.ProfileModelAssembler;
 import com.rich.budgetapi.api.model.ProfileModel;
 import com.rich.budgetapi.api.model.input.ProfileInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.Profile;
 import com.rich.budgetapi.domain.repository.ProfileRepository;
 import com.rich.budgetapi.domain.service.ProfileService;
@@ -40,6 +41,7 @@ public class ProfileController {
     @Autowired
     private ProfileInputModelDisassembler profileInputModelDisassembler;
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping
     public ResponseEntity<List<ProfileModel>> toList() {
         return ResponseEntity
@@ -47,6 +49,7 @@ public class ProfileController {
                 .body(profileModelAssembler.toCollectionModel(profileRepository.findAll()));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileModel> toFind(@PathVariable Long profileId) {
         return ResponseEntity
@@ -54,6 +57,7 @@ public class ProfileController {
                 .body(profileModelAssembler.toModel(profileService.findOrfail(profileId)));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PostMapping
     public ResponseEntity<ProfileModel> toAdd(@RequestBody @Valid ProfileInputModel profileInput) {
         Profile newprofile = profileInputModelDisassembler.toDomainOject(profileInput);
@@ -65,6 +69,7 @@ public class ProfileController {
                 .body(profileModelAssembler.toModel(newprofile));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @PutMapping("/{profileId}")
     public ResponseEntity<ProfileModel> toUpdate(@PathVariable Long profileId,
             @RequestBody @Valid ProfileInputModel profileInput) {
@@ -79,6 +84,7 @@ public class ProfileController {
                 .body(profileModelAssembler.toModel(profileCurrent));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChange
     @DeleteMapping("/{profileId}")
     public ResponseEntity<Void> toRemove(@PathVariable Long profileId) {
         profileService.toRemove(profileId);

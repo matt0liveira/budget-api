@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
@@ -33,6 +34,7 @@ import com.rich.budgetapi.api.assembler.transactionAssembler.TransactionModelAss
 import com.rich.budgetapi.api.model.TransactionModel;
 import com.rich.budgetapi.api.model.input.TransactionInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
+import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.core.security.SecurityUtils;
 import com.rich.budgetapi.core.validation.ValidationException;
 import com.rich.budgetapi.domain.exception.InvalidValueException;
@@ -66,6 +68,7 @@ public class TransactionController {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @CheckSecurity.Transactions.CanSearch
     @GetMapping
     public ResponseEntity<List<TransactionModel>> toSearch(TransactionFilter filter) {
         return ResponseEntity.ok()
@@ -73,12 +76,13 @@ public class TransactionController {
                         .toCollectionModel(transactionRepository.findAll(TransactionSpec.usingFilter(filter))));
     }
 
+    @CheckSecurity.Transactions.CanFind
     @GetMapping("/{transactionCode}")
-    public ResponseEntity<TransactionModel> toFind(@PathVariable String transactionCode) {
-        return ResponseEntity.ok()
-                .body(transactionModelAssembler.toModel(transactionService.findOrFail(transactionCode)));
+    public TransactionModel toFind(@PathVariable String transactionCode) {
+        return transactionModelAssembler.toModel(transactionService.findOrFail(transactionCode));
     }
 
+    @CheckSecurity.Transactions.CanAdd
     @PostMapping
     public ResponseEntity<TransactionModel> toAdd(@RequestBody @Valid TransactionInputModel transactionInput) {
         try {
@@ -99,8 +103,9 @@ public class TransactionController {
         }
     }
 
+    @CheckSecurity.Transactions.CanUpdate
     @PatchMapping("/{transactionCode}")
-    public ResponseEntity<TransactionModel> toPartialUpdate(@PathVariable String transactionCode,
+    public TransactionModel toPartialUpdate(@PathVariable String transactionCode,
             @RequestBody Map<String, Object> fields, HttpServletRequest request) {
         try {
             Transaction transactionCurrent = transactionService.findOrFail(transactionCode);
@@ -116,7 +121,7 @@ public class TransactionController {
             transactionService.validateTransaction(transactionCurrent);
             transactionCurrent = transactionService.toSave(transactionCurrent);
 
-            return ResponseEntity.ok().body(transactionModelAssembler.toModel(transactionCurrent));
+            return transactionModelAssembler.toModel(transactionCurrent);
         } catch (DataIntegrityViolationException ex) {
             throw new InvalidValueException(
                     "Valor inválido. Verifique os valores disponíveis e informe um valor válido.");
@@ -125,9 +130,24 @@ public class TransactionController {
 
     @DeleteMapping("/{transactionCode}")
     public ResponseEntity<Void> toRemove(@PathVariable String transactionCode) {
-        transactionService.toRemove(transactionCode);
+        Transaction transaction = transactionService.findOrFail(transactionCode);
+
+        if (!securityUtils.canUpdateTransactions(transaction.getUser().getId())) {
+            throw new AccessDeniedException("Você não tem permissão para realizar determinada ação");
+        }
+
+        validateTypeTransaction(transaction);
+        transactionService.toRemove(transaction);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private void validateTypeTransaction(Transaction transaction) {
+        if (transaction.getType().equals(TypeTransaction.EXPENSE)) {
+            transaction.getUser().setBalance(transaction.getUser().getBalance().add(transaction.getValue()));
+        } else {
+            transaction.getUser().setBalance(transaction.getUser().getBalance().subtract(transaction.getValue()));
+        }
     }
 
     private void verifyTypeTransaction(Transaction transaction) {

@@ -106,7 +106,8 @@ public class AuthorizationServerConfig {
             if (auth.getPrincipal() instanceof User) {
                 User userAuth = (User) auth.getPrincipal();
 
-                com.rich.budgetapi.domain.model.User user = userRepository.findByEmail(userAuth.getUsername())
+                com.rich.budgetapi.domain.model.User user = userRepository
+                        .findByEmail(userAuth.getUsername())
                         .orElseThrow();
 
                 Set<String> authorities = new HashSet<>();

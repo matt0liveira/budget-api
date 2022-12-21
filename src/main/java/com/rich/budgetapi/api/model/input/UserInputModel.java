@@ -19,9 +19,6 @@ public class UserInputModel {
     @NotBlank
     private String email;
 
-    @NotBlank
-    private String password;
-
     @NotNull
     @PositiveOrZero
     private BigDecimal balance;

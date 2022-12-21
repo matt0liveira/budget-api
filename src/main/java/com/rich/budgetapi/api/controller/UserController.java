@@ -20,6 +20,7 @@ import com.rich.budgetapi.api.assembler.userAssembler.UserModelAssembler;
 import com.rich.budgetapi.api.model.UserModel;
 import com.rich.budgetapi.api.model.input.ChangePasswordInputModel;
 import com.rich.budgetapi.api.model.input.UserInputModel;
+import com.rich.budgetapi.api.model.input.UserWithPasswordInputModel;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.User;
@@ -42,7 +43,7 @@ public class UserController {
     @Autowired
     private UserInputModelDisassembler userInputModelDisassembler;
 
-    @CheckSecurity.Users.CanConsult
+    @CheckSecurity.UsersProfilesPermissions.CanConsult
     @GetMapping
     public ResponseEntity<List<UserModel>> toList() {
         List<UserModel> users = userAssembler.toCollectionModel(userRepository.findAll());
@@ -50,13 +51,14 @@ public class UserController {
         return ResponseEntity.ok().body(users);
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanConsultUser
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> toFind(@PathVariable Long userId) {
         return ResponseEntity.ok().body(userAssembler.toModel(userService.findOrFail(userId)));
     }
 
     @PostMapping
-    public ResponseEntity<UserModel> toSave(@RequestBody @Valid UserInputModel userInput) {
+    public ResponseEntity<UserModel> toAdd(@RequestBody @Valid UserWithPasswordInputModel userInput) {
         User newUser = userInputModelDisassembler.toDomainObject(userInput);
 
         newUser = userService.toSave(newUser);
@@ -66,6 +68,7 @@ public class UserController {
                 .body(userAssembler.toModel(newUser));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChangeUser
     @PutMapping("/{userId}")
     public ResponseEntity<UserModel> toUpdate(@PathVariable Long userId, @RequestBody @Valid UserInputModel userInput) {
         User userCurrent = userService.findOrFail(userId);
@@ -77,6 +80,7 @@ public class UserController {
         return ResponseEntity.ok().body(userAssembler.toModel(userCurrent));
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChangeUser
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> toRemove(@PathVariable Long userId) {
         userService.toRemove(userId);
@@ -84,6 +88,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.UsersProfilesPermissions.CanChangePassword
     @PutMapping("/change-password/{userId}")
     public ResponseEntity<Void> toChangePassword(@PathVariable Long userId,
             @RequestBody @Valid ChangePasswordInputModel changePasswordInput) {

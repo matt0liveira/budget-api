@@ -5,9 +5,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CategoryModel {
+public class CategoryModelWithUser {
 
     private Long id;
     private String description;
     private String color;
+    private UserModel user;
 }

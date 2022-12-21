@@ -36,7 +36,7 @@ public class JpaUserDetailsService implements UserDetailsService {
                 .getProfiles()
                 .stream()
                 .flatMap(profile -> profile.getPermissions().stream())
-                .map(permission -> new SimpleGrantedAuthority(permission.getDescription().toUpperCase()))
+                .map(permission -> new SimpleGrantedAuthority(permission.getName().toUpperCase()))
                 .collect(Collectors.toList());
     }
 
