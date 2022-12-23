@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,17 +21,20 @@ import com.rich.budgetapi.api.assembler.categoryAssembler.CategoryInputModelDisa
 import com.rich.budgetapi.api.assembler.categoryAssembler.CategoryModelAssembler;
 import com.rich.budgetapi.api.model.CategoryModelWithUser;
 import com.rich.budgetapi.api.model.input.CategoryInputModel;
+import com.rich.budgetapi.api.openapi.controlller.CategoryControllerOpenApi;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.core.security.SecurityUtils;
+import com.rich.budgetapi.domain.filter.CategoryFilter;
 import com.rich.budgetapi.domain.model.Category;
 import com.rich.budgetapi.domain.model.User;
 import com.rich.budgetapi.domain.repository.CategoryRepository;
 import com.rich.budgetapi.domain.service.CategoryService;
+import com.rich.budgetapi.infrasctruture.spec.CategorySpec;
 
 @RestController
 @RequestMapping("/categories")
-public class CategoryController {
+public class CategoryController implements CategoryControllerOpenApi {
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -49,8 +53,9 @@ public class CategoryController {
 
     @CheckSecurity.Categories.CanConsult
     @GetMapping
-    public ResponseEntity<List<CategoryModelWithUser>> toList() {
-        return ResponseEntity.ok().body(categoryModelAssembler.toCollectionModel(categoryRepository.findAll()));
+    public ResponseEntity<List<CategoryModelWithUser>> toList(CategoryFilter filter) {
+        return ResponseEntity.ok().body(
+                categoryModelAssembler.toCollectionModel(categoryRepository.findAll(CategorySpec.usingFilter(filter))));
     }
 
     @CheckSecurity.Categories.CanFind
@@ -59,13 +64,7 @@ public class CategoryController {
         return categoryModelAssembler.toModel(categoryService.findOrFail(categoryId));
     }
 
-    @CheckSecurity.Categories.CanConsultByUser
-    @GetMapping("/by-user/{userId}")
-    public ResponseEntity<List<CategoryModelWithUser>> toFindByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok()
-                .body(categoryModelAssembler.toCollectionModel(categoryRepository.findByUserId(userId)));
-    }
-
+    @CheckSecurity.Categories.CanFind
     @GetMapping("/by-description")
     public ResponseEntity<List<CategoryModelWithUser>> toFindByDescription(
             @RequestParam(required = true) String description) {
@@ -89,6 +88,7 @@ public class CategoryController {
                 .body(categoryModelAssembler.toModel(newCategory));
     }
 
+    @CheckSecurity.Categories.CanUpdate
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryModelWithUser> toUpdate(@PathVariable Long categoryId,
             @RequestBody @Valid CategoryInputModel categoryInput) {
@@ -102,8 +102,40 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<?> toRemove(@PathVariable Long categoryId) {
+    public ResponseEntity<Void> toRemove(@PathVariable Long categoryId) {
+        Category category = categoryService.findOrFail(categoryId);
+
+        if (!securityUtils.canChangeCategories(category.getUser().getId())) {
+            throw new AccessDeniedException("Você não tem permissão para realizar determinada ação.");
+        }
+
         categoryService.toRemove(categoryId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{categoryId}/inactive")
+    public ResponseEntity<Void> toActivate(@PathVariable Long categoryId) {
+        Category category = categoryService.findOrFail(categoryId);
+
+        if (!securityUtils.canChangeCategories(category.getUser().getId())) {
+            throw new AccessDeniedException("Você não tem permissão para realizar determinada ação.");
+        }
+
+        categoryService.toActivate(categoryId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{categoryId}/inactive")
+    public ResponseEntity<Void> toInactivate(@PathVariable Long categoryId) {
+        Category category = categoryService.findOrFail(categoryId);
+
+        if (!securityUtils.canChangeCategories(category.getUser().getId())) {
+            throw new AccessDeniedException("Você não tem permissão para realizar determinada ação.");
+        }
+
+        categoryService.toInactivate(categoryId);
 
         return ResponseEntity.noContent().build();
     }

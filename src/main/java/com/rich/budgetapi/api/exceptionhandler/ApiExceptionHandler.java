@@ -26,6 +26,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.rich.budgetapi.domain.exception.DomainException;
+import com.rich.budgetapi.domain.exception.EntityInUseException;
 import com.rich.budgetapi.domain.exception.EntityNotfoundException;
 
 @ControllerAdvice
@@ -90,6 +91,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		String detail = "Você não tem permissão para realizar determinada ação.";
 		ProblemApi problemApi = instanceProblemApi(status, problemApiType, detail)
 				.userMessage(detail)
+				.build();
+
+		return handleExceptionInternal(ex, problemApi, new HttpHeaders(), status, req);
+	}
+
+	@ExceptionHandler(EntityInUseException.class)
+	public ResponseEntity<Object> handleEntityInUse(EntityInUseException ex, WebRequest req) {
+		ProblemApiType problemApiType = ProblemApiType.ENTITY_IN_USE;
+		HttpStatus status = HttpStatus.CONFLICT;
+		ProblemApi problemApi = instanceProblemApi(status, problemApiType, ex.getMessage())
+				.userMessage(ex.getMessage())
 				.build();
 
 		return handleExceptionInternal(ex, problemApi, new HttpHeaders(), status, req);

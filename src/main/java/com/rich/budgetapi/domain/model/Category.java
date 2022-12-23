@@ -27,7 +27,18 @@ public class Category {
     @Column(nullable = false)
     private String color;
 
+    @Column(nullable = false)
+    private Boolean inactive = Boolean.FALSE;
+
     @ManyToOne
     @NotNull
     private User user;
+
+    public void activate() {
+        setInactive(false);
+    }
+
+    public void inactivate() {
+        setInactive(true);
+    }
 }

@@ -10,6 +10,7 @@ public enum ProblemApiType {
     INVALID_DATA("Dados inválidos", "/dados-invalidos"),
     INVALID_PARAMETER("Parâmetros inválidos", "/parametros-invalidos"),
     MEDIA_TYPE_NOT_SUPPORTED("Tipo de mídia não suportada", "/tipo-de-midia-nao-suportada"),
+    ENTITY_IN_USE("Entidade em uso", "/entidade-em-uso"),
     FORBIDDEN("Acesso negado", "/acesso-negado");
 
     private String title;

@@ -16,9 +16,9 @@ insert into user (name, email, password, balance) values ('Maria Joaquina', 'mar
 insert into user (name, email, password, balance) values ('Cirilo', 'cirilo@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 1250);
 insert into user (name, email, password, balance) values ('Roberta', 'roberta@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 3000);
 
-insert into category (description, color, user_id) values ('Saúde','#06C8F3', 1);
-insert into category (description, color, user_id) values ('Alimentação','#06F343', 1);
-insert into category (description, color, user_id) values ('Lazer','#EFF306', 2);
+insert into category (description, color, user_id, inactive) values ('Saúde','#06C8F3', 1, false);
+insert into category (description, color, user_id, inactive) values ('Alimentação','#06F343', 1, false);
+insert into category (description, color, user_id, inactive) values ('Lazer','#EFF306', 2, false);
 
 insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('24faa01b-c97b-47a6-be67-b054bfe78d55', 150, 1, 'EXPENSE', 1, 'Remédios para gripe', curdate(), utc_timestamp);
 insert into transaction (code, value, user_id, type, category_id, description, date, creation_date) values ('a9f7a3f0-3dc1-46de-b254-7b02ae13926d', 65, 2, 'EXPENSE', 2, 'Noite da pizza', curdate(), utc_timestamp);

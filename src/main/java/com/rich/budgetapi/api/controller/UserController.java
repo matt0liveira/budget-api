@@ -21,6 +21,7 @@ import com.rich.budgetapi.api.model.UserModel;
 import com.rich.budgetapi.api.model.input.ChangePasswordInputModel;
 import com.rich.budgetapi.api.model.input.UserInputModel;
 import com.rich.budgetapi.api.model.input.UserWithPasswordInputModel;
+import com.rich.budgetapi.api.openapi.controlller.UserControllerOpenApi;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.User;
@@ -29,7 +30,7 @@ import com.rich.budgetapi.domain.service.UserService;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserControllerOpenApi {
 
     @Autowired
     private UserRepository userRepository;

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.permissionAssembler.PermissionModelAssembler;
 import com.rich.budgetapi.api.model.PermissionModel;
+import com.rich.budgetapi.api.openapi.controlller.ProfilePermissionControllerOpenApi;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.PermissionNotFoundException;
 import com.rich.budgetapi.domain.model.Permission;
@@ -22,7 +23,7 @@ import com.rich.budgetapi.domain.service.ProfileService;
 
 @RestController
 @RequestMapping("/profiles/{profileId}/permissions")
-public class ProfilePermissionController {
+public class ProfilePermissionController implements ProfilePermissionControllerOpenApi {
 
     @Autowired
     private ProfileService profileService;

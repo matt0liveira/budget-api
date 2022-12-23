@@ -19,6 +19,7 @@ import com.rich.budgetapi.api.assembler.permissionAssembler.PermissionInputModel
 import com.rich.budgetapi.api.assembler.permissionAssembler.PermissionModelAssembler;
 import com.rich.budgetapi.api.model.PermissionModel;
 import com.rich.budgetapi.api.model.input.PermissionInputModel;
+import com.rich.budgetapi.api.openapi.controlller.PermissionControllerOpenApi;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.Permission;
@@ -27,7 +28,7 @@ import com.rich.budgetapi.domain.service.PermissionService;
 
 @RestController
 @RequestMapping("/permissions")
-public class PermissionController {
+public class PermissionController implements PermissionControllerOpenApi {
 
     @Autowired
     private PermissionRepository permissionRepository;

@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rich.budgetapi.api.assembler.photoUserAssembler.PhotoUserModelAssembler;
 import com.rich.budgetapi.api.model.PhotoUserModel;
 import com.rich.budgetapi.api.model.input.PhotoUserInputModel;
+import com.rich.budgetapi.api.openapi.controlller.UserPhotoControllerOpenApi;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.EntityNotfoundException;
 import com.rich.budgetapi.domain.model.PhotoUser;
@@ -36,7 +37,7 @@ import com.rich.budgetapi.domain.service.UserService;
 
 @RestController
 @RequestMapping("/users/{userId}/photo")
-public class UserPhotoController {
+public class UserPhotoController implements UserPhotoControllerOpenApi {
 
     @Autowired
     private PhotoStorageService photoStorageService;

@@ -47,27 +47,28 @@ public @interface CheckSecurity {
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        @PreAuthorize("@securityUtils.canConsultCategories()")
+        @PreAuthorize("@securityUtils.canConsultCategories(#filter.userId)")
         public @interface CanConsult {
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @PreAuthorize("hasAuthority('SCOPE_READ') && isAuthenticated()")
-        @PostAuthorize("@securityUtils.canFindCategory(returnObject.user.id)")
+        @PostAuthorize("@securityUtils.canConsultCategories(returnObject.user.id)")
         public @interface CanFind {
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @PreAuthorize("@securityUtils.canConsultCategoriesByUser(#userId)")
-        public @interface CanConsultByUser {
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') && isAuthenticated()")
         public @interface CanAdd {
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') && isAuthenticated()")
+        @PostAuthorize("@securityUtils.canChangeCategories(returnObject.user.id)")
+        public @interface CanUpdate {
         }
 
     }

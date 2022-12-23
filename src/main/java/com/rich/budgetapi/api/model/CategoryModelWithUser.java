@@ -10,5 +10,6 @@ public class CategoryModelWithUser {
     private Long id;
     private String description;
     private String color;
+    private Boolean inactive;
     private UserModel user;
 }

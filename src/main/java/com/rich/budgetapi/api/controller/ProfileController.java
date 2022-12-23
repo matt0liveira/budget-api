@@ -19,6 +19,7 @@ import com.rich.budgetapi.api.assembler.profileAssembler.ProfileInputModelDisass
 import com.rich.budgetapi.api.assembler.profileAssembler.ProfileModelAssembler;
 import com.rich.budgetapi.api.model.ProfileModel;
 import com.rich.budgetapi.api.model.input.ProfileInputModel;
+import com.rich.budgetapi.api.openapi.controlller.ProfileControllerOpenApi;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.model.Profile;
@@ -27,7 +28,7 @@ import com.rich.budgetapi.domain.service.ProfileService;
 
 @RestController
 @RequestMapping("/profiles")
-public class ProfileController {
+public class ProfileController implements ProfileControllerOpenApi {
 
     @Autowired
     private ProfileRepository profileRepository;

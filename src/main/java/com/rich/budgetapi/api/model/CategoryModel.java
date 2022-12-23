@@ -10,4 +10,5 @@ public class CategoryModel {
     private Long id;
     private String description;
     private String color;
+    private Boolean inactive;
 }

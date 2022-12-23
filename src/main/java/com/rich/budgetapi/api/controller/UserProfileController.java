@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.profileAssembler.ProfileModelAssembler;
 import com.rich.budgetapi.api.model.ProfileModel;
+import com.rich.budgetapi.api.openapi.controlller.UserProfileControllerOpenApi;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.exception.ProfileNotFoundException;
 import com.rich.budgetapi.domain.model.Profile;
@@ -23,7 +24,7 @@ import com.rich.budgetapi.domain.service.UserService;
 
 @RestController
 @RequestMapping("/users/{userId}/profiles")
-public class UserProfileController {
+public class UserProfileController implements UserProfileControllerOpenApi {
 
     @Autowired
     private UserService userService;

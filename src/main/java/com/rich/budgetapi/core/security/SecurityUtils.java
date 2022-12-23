@@ -58,16 +58,12 @@ public class SecurityUtils {
         return hasScopeWrite() && userAuthenticatedEquals(userId);
     }
 
-    public boolean canConsultCategories() {
-        return hasScopeRead() && hasAuthority("CONSULT_CATEGORIES");
+    public boolean canConsultCategories(Long userId) {
+        return hasScopeRead() && (hasAuthority("CONSULT_CATEGORIES")) || userAuthenticatedEquals(userId);
     }
 
-    public boolean canFindCategory(Long userId) {
-        return canConsultCategories() || userAuthenticatedEquals(userId);
-    }
-
-    public boolean canConsultCategoriesByUser(Long userId) {
-        return canConsultCategories() || userAuthenticatedEquals(userId);
+    public boolean canChangeCategories(Long userId) {
+        return hasScopeWrite() && (hasAuthority("CHANGE_CATEGORIES")) || userAuthenticatedEquals(userId);
     }
 
     public boolean canSearchTransactions(Long userId) {
