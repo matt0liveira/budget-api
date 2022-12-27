@@ -12,6 +12,11 @@ import org.springframework.http.MediaType;
 import com.rich.budgetapi.api.exceptionhandler.ProblemApi;
 
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -23,6 +28,10 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
 
 @Configuration
+@SecurityScheme(name = "security_auth", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(authorizationCode = @OAuthFlow(authorizationUrl = "${springdoc.oAuthFlow.authorizationUrl}", tokenUrl = "${springdoc.oAuthFlow.tokenUrl}", scopes = {
+		@OAuthScope(name = "READ", description = "read scope"),
+		@OAuthScope(name = "WRITE", description = "write scope")
+})))
 public class SpringDocConfig {
 
 	@Bean
@@ -37,7 +46,9 @@ public class SpringDocConfig {
 						new Tag().name("Users").description("Manage users"),
 						new Tag().name("Profiles").description("Manage profiles"),
 						new Tag().name("Permissions").description("Manage permissions"),
-						new Tag().name("Categories").description("Manage categories")))
+						new Tag().name("Categories").description("Manage categories"),
+						new Tag().name("Transactions").description("Manage transactions"),
+						new Tag().name("Analytics").description("Manage analysis reports")))
 				.components(new Components()
 						.schemas(generateSchemas())
 						.responses(generateResponses()));
@@ -104,7 +115,7 @@ public class SpringDocConfig {
 								.schema(new Schema<ProblemApi>().$ref("ProblemApi")));
 
 		apiResponseMap.put("BadRequest", new ApiResponse()
-				.description("Invalid request from cliente side")
+				.description("Invalid request from client side")
 				.content(content));
 
 		apiResponseMap.put("NotAcceptable", new ApiResponse()

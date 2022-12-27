@@ -5,6 +5,7 @@ import java.sql.Date;
 
 import com.rich.budgetapi.domain.model.enums.TypeTransaction;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,8 @@ public class TransactionModel {
     private BigDecimal value;
     private String description;
     private TypeTransaction typeTransaction;
+
+    @Schema(format = "date", type = "string")
     private Date date;
     private UserModel user;
     private CategoryModel category;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rich.budgetapi.api.openapi.controlller.AnalyticsControllerOpenApi;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.domain.filter.TotalTransactionsWithoutDateFilter;
 import com.rich.budgetapi.domain.filter.TransactionFilter;
@@ -21,7 +22,7 @@ import com.rich.budgetapi.domain.service.TransactionsAnalyticsQueryService;
 
 @RestController
 @RequestMapping("/analytics")
-public class AnalyticsController {
+public class AnalyticsController implements AnalyticsControllerOpenApi {
 
     @Autowired
     private TransactionsAnalyticsQueryService transactionsAnalyticsService;

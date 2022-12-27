@@ -13,13 +13,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@SecurityRequirement(name = "security_auth")
 @Tag(name = "Profiles")
 public interface ProfileControllerOpenApi {
 
 	@Operation(summary = "List all profiles")
-	public ResponseEntity<List<ProfileModel>> toList();
+	ResponseEntity<List<ProfileModel>> toList();
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Success request"),
@@ -27,11 +29,11 @@ public interface ProfileControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Profile not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Find a profile by ID")
-	public ResponseEntity<ProfileModel> toFind(Long profileId);
+	ResponseEntity<ProfileModel> toFind(Long profileId);
 
 	@ApiResponse(responseCode = "201", description = "Created")
 	@Operation(summary = "Add a new profile")
-	public ResponseEntity<ProfileModel> toAdd(ProfileInputModel profileInput);
+	ResponseEntity<ProfileModel> toAdd(ProfileInputModel profileInput);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Success request"),
@@ -39,7 +41,7 @@ public interface ProfileControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Profile not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Update profile data by ID")
-	public ResponseEntity<ProfileModel> toUpdate(Long profileId,
+	ResponseEntity<ProfileModel> toUpdate(Long profileId,
 			ProfileInputModel profileInput);
 
 	@ApiResponses({
@@ -48,5 +50,5 @@ public interface ProfileControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Profile not found")
 	})
 	@Operation(summary = "Remove a profile by ID")
-	public ResponseEntity<Void> toRemove(Long profileId);
+	ResponseEntity<Void> toRemove(Long profileId);
 }

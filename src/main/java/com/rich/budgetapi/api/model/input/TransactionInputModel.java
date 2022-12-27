@@ -11,6 +11,7 @@ import javax.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class TransactionInputModel {
     private BigDecimal value;
 
     @NotBlank
+    @Schema(name = "type", allowableValues = "EXPENSE,INCOME")
     private String type;
 
     @NotNull
@@ -32,6 +34,7 @@ public class TransactionInputModel {
     @NotBlank
     private String description;
 
+    @Schema(format = "date", type = "string")
     @DateTimeFormat(iso = ISO.DATE)
     private Date date;
 }

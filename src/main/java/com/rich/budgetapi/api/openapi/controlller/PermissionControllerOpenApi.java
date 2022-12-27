@@ -13,13 +13,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@SecurityRequirement(name = "security_auth")
 @Tag(name = "Permissions")
 public interface PermissionControllerOpenApi {
 
 	@Operation(summary = "List all permissions")
-	public ResponseEntity<List<PermissionModel>> toList();
+	ResponseEntity<List<PermissionModel>> toList();
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Success request"),
@@ -27,11 +29,11 @@ public interface PermissionControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Permission not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Find a permission by ID")
-	public ResponseEntity<PermissionModel> toFind(Long permissionId);
+	ResponseEntity<PermissionModel> toFind(Long permissionId);
 
 	@Operation(summary = "Add a new permission")
 	@ApiResponse(responseCode = "201", description = "Created")
-	public ResponseEntity<PermissionModel> toAdd(PermissionInputModel permissionInput);
+	ResponseEntity<PermissionModel> toAdd(PermissionInputModel permissionInput);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Success request"),
@@ -39,7 +41,7 @@ public interface PermissionControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Permission not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Update data permission by ID")
-	public ResponseEntity<PermissionModel> toUpdate(Long permissionId,
+	ResponseEntity<PermissionModel> toUpdate(Long permissionId,
 			PermissionInputModel permissionInput);
 
 	@ApiResponses({
@@ -48,5 +50,5 @@ public interface PermissionControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Permission not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Remove a permission by ID")
-	public ResponseEntity<Void> toRemove(Long permissionId);
+	ResponseEntity<Void> toRemove(Long permissionId);
 }

@@ -33,6 +33,7 @@ import com.rich.budgetapi.api.assembler.transactionAssembler.TransactionInputMod
 import com.rich.budgetapi.api.assembler.transactionAssembler.TransactionModelAssembler;
 import com.rich.budgetapi.api.model.TransactionModel;
 import com.rich.budgetapi.api.model.input.TransactionInputModel;
+import com.rich.budgetapi.api.openapi.controlller.TransactionControllerOpenApi;
 import com.rich.budgetapi.api.utils.ResourceUriHelper;
 import com.rich.budgetapi.core.security.CheckSecurity;
 import com.rich.budgetapi.core.security.SecurityUtils;
@@ -48,7 +49,7 @@ import com.rich.budgetapi.infrasctruture.spec.TransactionSpec;
 
 @RestController
 @RequestMapping("/transactions")
-public class TransactionController {
+public class TransactionController implements TransactionControllerOpenApi {
 
     @Autowired
     private TransactionRepository transactionRepository;

@@ -11,12 +11,15 @@ import com.rich.budgetapi.api.model.PhotoUserModel;
 import com.rich.budgetapi.api.model.input.PhotoUserInputModel;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@SecurityRequirement(name = "security_auth")
 @Tag(name = "Users")
 public interface UserPhotoControllerOpenApi {
 
@@ -26,7 +29,7 @@ public interface UserPhotoControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Update user photo by USER ID")
-	public ResponseEntity<PhotoUserModel> toUpdate(Long userId,
+	ResponseEntity<PhotoUserModel> toUpdate(Long userId,
 			PhotoUserInputModel photoUserInput, MultipartFile file) throws IOException;
 
 	@ApiResponses({
@@ -35,8 +38,8 @@ public interface UserPhotoControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Find user photo by USER ID")
-	public ResponseEntity<?> toFind(Long userId,
-			String acceptHeader) throws HttpMediaTypeNotAcceptableException;
+	ResponseEntity<?> toFind(Long userId,
+			@Parameter(hidden = true, required = false) String acceptHeader) throws HttpMediaTypeNotAcceptableException;
 
 	@Operation(summary = "Remove user photo by USER ID")
 	@ApiResponses({
@@ -44,5 +47,5 @@ public interface UserPhotoControllerOpenApi {
 
 			@ApiResponse(responseCode = "404", description = "User not found")
 	})
-	public ResponseEntity<Void> toRemove(Long userId);
+	ResponseEntity<Void> toRemove(Long userId);
 }

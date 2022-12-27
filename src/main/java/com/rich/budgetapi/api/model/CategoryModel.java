@@ -1,5 +1,6 @@
 package com.rich.budgetapi.api.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +11,7 @@ public class CategoryModel {
     private Long id;
     private String description;
     private String color;
+
+    @Schema(defaultValue = "false")
     private Boolean inactive;
 }
