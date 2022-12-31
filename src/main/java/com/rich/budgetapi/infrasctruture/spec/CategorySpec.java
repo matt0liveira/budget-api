@@ -27,6 +27,10 @@ public class CategorySpec {
                 predicates.add(builder.equal(root.get("inactive"), Boolean.FALSE));
             }
 
+            if(filter.getDescription() != null) {
+                predicates.add(builder.like(root.get("description"), "%" + filter.getDescription() + "%"));
+            }
+
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }

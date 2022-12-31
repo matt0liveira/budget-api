@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS budget;
-USE budget;
-
 CREATE TABLE IF NOT EXISTS `user` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `balance` double NOT NULL,

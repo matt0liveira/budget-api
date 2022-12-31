@@ -5,10 +5,12 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.rich.budgetapi.domain.exception.DomainException;
+import com.rich.budgetapi.domain.exception.EntityInUseException;
 import com.rich.budgetapi.domain.exception.UserNotFoundException;
 import com.rich.budgetapi.domain.model.Profile;
 import com.rich.budgetapi.domain.model.User;
@@ -44,9 +46,14 @@ public class UserService {
 
     @Transactional
     public void toRemove(Long userId) {
-        User user = findOrFail(userId);
-
-        userRepository.delete(user);
+        try {
+            User user = findOrFail(userId);
+    
+            userRepository.delete(user);
+            userRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new EntityInUseException(String.format("User code %d cannot be removed, because it's in use", userId));
+        }
     }
 
     @Transactional

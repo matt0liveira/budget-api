@@ -26,7 +26,8 @@ public interface CategoryControllerOpenApi {
 	@Operation(summary = "List all categories")
 	@Parameters({
 			@Parameter(name = "userId", required = false, example = "1"),
-			@Parameter(name = "onlyActive", required = false, example = "true")
+			@Parameter(name = "onlyActive", required = false, example = "true"),
+			@Parameter(name = "description", required = false, example = "Finance")
 	})
 	ResponseEntity<List<CategoryModelWithUser>> toList(@Parameter(hidden = true) CategoryFilter filter);
 
@@ -37,10 +38,6 @@ public interface CategoryControllerOpenApi {
 	@Operation(summary = "Find a category by ID")
 	CategoryModelWithUser toFind(Long categoryId);
 
-	@Operation(summary = "Find categories by description")
-	ResponseEntity<List<CategoryModelWithUser>> toFindByDescription(
-			String description);
-
 	@Operation(summary = "Add a new category")
 	ResponseEntity<CategoryModelWithUser> toAdd(CategoryInputModel categoryInput);
 
@@ -49,7 +46,7 @@ public interface CategoryControllerOpenApi {
 			@ApiResponse(responseCode = "404", description = "Category not found", content = @Content(schema = @Schema(implementation = ProblemApi.class)))
 	})
 	@Operation(summary = "Update data category by ID")
-	ResponseEntity<CategoryModelWithUser> toUpdate(Long categoryId,
+	CategoryModelWithUser toUpdate(Long categoryId,
 			CategoryInputModel categoryInput);
 
 	@ApiResponses({

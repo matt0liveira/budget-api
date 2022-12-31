@@ -60,7 +60,7 @@ public @interface CheckSecurity {
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') && isAuthenticated()")
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') || isAuthenticated()")
         public @interface CanAdd {
         }
 

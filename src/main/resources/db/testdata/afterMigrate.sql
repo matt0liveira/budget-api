@@ -15,6 +15,7 @@ SET foreign_key_checks = 1;
 insert into user (name, email, password, balance) values ('Maria Joaquina', 'maria.joaquina@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 1000);
 insert into user (name, email, password, balance) values ('Cirilo', 'cirilo@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 1250);
 insert into user (name, email, password, balance) values ('Roberta', 'roberta@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 3000);
+insert into user (name, email, password, balance) values ('Roberto', 'roberto@budget.com', '$2a$10$qe6KkNC3sduXvWNywQFy5.p0z7z9MxKceJnK8qH9/KNPxWmEKc.D.', 20000);
 
 insert into category (description, color, user_id, inactive) values ('Saúde','#06C8F3', 1, false);
 insert into category (description, color, user_id, inactive) values ('Alimentação','#06F343', 1, false);
@@ -28,11 +29,11 @@ insert into permission (id, name, description) values (1, 'CHANGE_USERS_PROFILES
 insert into permission (id, name, description) values (2, 'CHANGE_CATEGORIES', 'Allows creation, changing and deleting of categories');
 insert into permission (id, name, description) values (3, 'CHANGE_TRANSACTIONS', 'Allows creation, changing and deleting of transactions');
 insert into permission (id, name, description) values (4, 'CONSULT_USERS_PROFILES_PERMISSIONS', 'Allows to consult users');
-insert into permission (id, name, description) values (5, 'CONSULT_TRANSATIONS', 'Allows to consult transactions');
+insert into permission (id, name, description) values (5, 'CONSULT_TRANSACTIONS', 'Allows to consult transactions');
 insert into permission (id, name, description) values (6, 'CONSULT_CATEGORIES', 'Allows to consult categories');
 insert into permission (id, name, description) values (7, 'CONSULT_REPORTS', 'Allows to consult reports');
 
-insert into profile (id, name) values (1, 'Gerente'), (2, 'Vendedor'), (3, 'Secretário');
+insert into profile (id, name) values (1, 'INTERNAL'), (2, 'ADMIN'), (3, 'SUPERVISOR'), (4, 'USER');
 
 insert into profile_permission (profile_id, permission_id) select 1, id from permission;
 insert into profile_permission (profile_id, permission_id) select 2, id from permission where name like 'CONSULT_%';

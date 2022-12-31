@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rich.budgetapi.api.assembler.categoryAssembler.CategoryInputModelDisassembler;
@@ -64,15 +65,6 @@ public class CategoryController implements CategoryControllerOpenApi {
         return categoryModelAssembler.toModel(categoryService.findOrFail(categoryId));
     }
 
-    @CheckSecurity.Categories.CanFind
-    @GetMapping("/by-description")
-    public ResponseEntity<List<CategoryModelWithUser>> toFindByDescription(
-            @RequestParam(required = true) String description) {
-        List<Category> categories = categoryRepository.findByDescriptionLike("%" + description + "%");
-
-        return ResponseEntity.ok().body(categoryModelAssembler.toCollectionModel(categories));
-    }
-
     @CheckSecurity.Categories.CanAdd
     @PostMapping
     public ResponseEntity<CategoryModelWithUser> toAdd(@RequestBody @Valid CategoryInputModel categoryInput) {
@@ -90,7 +82,8 @@ public class CategoryController implements CategoryControllerOpenApi {
 
     @CheckSecurity.Categories.CanUpdate
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryModelWithUser> toUpdate(@PathVariable Long categoryId,
+    @ResponseStatus(code = HttpStatus.OK)
+    public CategoryModelWithUser toUpdate(@PathVariable Long categoryId,
             @RequestBody @Valid CategoryInputModel categoryInput) {
         Category categoryCurrent = categoryService.findOrFail(categoryId);
 
@@ -98,7 +91,7 @@ public class CategoryController implements CategoryControllerOpenApi {
 
         categoryCurrent = categoryService.toSave(categoryCurrent);
 
-        return ResponseEntity.ok().body(categoryModelAssembler.toModel(categoryCurrent));
+        return categoryModelAssembler.toModel(categoryCurrent);
     }
 
     @DeleteMapping("/{categoryId}")

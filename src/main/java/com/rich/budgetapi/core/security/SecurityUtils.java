@@ -1,21 +1,29 @@
 package com.rich.budgetapi.core.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import com.rich.budgetapi.domain.repository.UserRepository;
+
 @Component
 public class SecurityUtils {
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
     public Long getUserIdAuthenticated() {
-        Jwt jwt = (Jwt) getAuthentication().getPrincipal();
+        if(getAuthentication().getPrincipal() instanceof Jwt jwt) {
+            return jwt.getClaim("user_id");
+        }
 
-        return jwt.getClaim("user_id");
+        return this.userRepository.findByEmail(getAuthentication().getName()).get().getId();
     }
 
     public boolean isAuthenticated() {
@@ -67,7 +75,7 @@ public class SecurityUtils {
     }
 
     public boolean canSearchTransactions(Long userId) {
-        return hasScopeRead() && (hasAuthority("CONSULT_TRANSATIONS")) || userAuthenticatedEquals(userId);
+        return hasScopeRead() && (hasAuthority("CONSULT_TRANSACTIONS")) || userAuthenticatedEquals(userId);
     }
 
     public boolean userAuthenticatedEquals(Long userId) {

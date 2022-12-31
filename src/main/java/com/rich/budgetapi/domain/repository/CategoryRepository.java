@@ -16,8 +16,6 @@ public interface CategoryRepository
     @Query("from Category c join fetch c.user")
     List<Category> findAll();
 
-    List<Category> findByDescriptionLike(String description);
-
     @Query("from Category c where c.inactive = 0")
     List<Category> findOnlyActive();
 }

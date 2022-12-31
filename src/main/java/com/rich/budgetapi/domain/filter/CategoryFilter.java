@@ -10,4 +10,7 @@ public class CategoryFilter {
     private Long userId;
 
     private Boolean onlyActive;
+
+    private String description;
+
 }
