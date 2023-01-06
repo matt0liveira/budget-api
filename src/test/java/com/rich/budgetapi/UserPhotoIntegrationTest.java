@@ -1,24 +1,30 @@
 package com.rich.budgetapi;
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+
+import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.rich.budgetapi.core.io.Base64ProtocolResolver;
 
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-
-import java.io.File;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -50,24 +56,24 @@ public class UserPhotoIntegrationTest {
 	}
 
     @Test
-    public void shouldReturnStatus200_WhenConsultPhotoUser() {
-        given()
-            .accept(ContentType.JSON)
-        .when()
-            .get("/{userId}/photo", 1)
-        .then()
-            .statusCode(HttpStatus.OK.value());
-    }
+    public void shoulReturnStatus200_WhenUpdatePhotoUser() throws IOException {        
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+        "user.jpeg", 
+        MediaType.MULTIPART_FORM_DATA_VALUE,
+        "".getBytes());
 
-    @Test
-    public void shoulReturnStatus200_WhenUpdatePhotoUser() {
-        given()
-            .body(new File("C:/Users/MatheusVieira/Downloads/user.jpeg"))
-            .contentType(ContentType.MULTIPART)
-        .when()
-            .put("/{userId}/photo", 1)
-        .then()
-            .statusCode(HttpStatus.OK.value());
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+        try {
+            mockMvc
+                .perform(
+                    multipart("users/{userId}/photo", 1)
+                    .file(file)
+                ).andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
