@@ -1,5 +1,7 @@
 SET foreign_key_checks = 0;
 
+lock tables category write, user write, transaction write, permission write, profile write, profile_permission write, oauth2_registered_client write, user_profile write;
+
 TRUNCATE category;
 TRUNCATE user;
 TRUNCATE transaction;
@@ -53,3 +55,5 @@ VALUES('2', 'budget-web', '2022-08-16 19:04:12', '$2a$12$3VM3Sb3T5PhaODIzGovv2ui
 INSERT INTO oauth2_registered_client
 (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at, client_name, client_authentication_methods, authorization_grant_types, redirect_uris, scopes, client_settings, token_settings)
 VALUES('3', 'foodanalytics', '2022-08-16 19:04:12', '$2a$12$3VM3Sb3T5PhaODIzGovv2uiV6ieewwZGO/pikiVJdzIJ0RSNwi5SK', NULL, '3', 'client_secret_basic', 'authorization_code', 'http://www.foodanalytics.local:8082', 'READ,WRITE', '{"@class":"java.util.Collections$UnmodifiableMap","settings.client.require-proof-key":false,"settings.client.require-authorization-consent":false}', '{"@class":"java.util.Collections$UnmodifiableMap","settings.token.reuse-refresh-tokens":true,"settings.token.id-token-signature-algorithm":["org.springframework.security.oauth2.jose.jws.SignatureAlgorithm","RS256"],"settings.token.access-token-time-to-live":["java.time.Duration",1800.000000000],"settings.token.access-token-format":{"@class":"org.springframework.security.oauth2.core.OAuth2TokenFormat","value":"self-contained"},"settings.token.refresh-token-time-to-live":["java.time.Duration",3600.000000000]}');
+
+unlock tables;

@@ -42,6 +42,8 @@ public class UserIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     private String jsonUser;
+
+    private String jsonUserUpdate;
     
     @BeforeEach
 	public void setUp() {
@@ -51,6 +53,7 @@ public class UserIntegrationTest {
 		RestAssuredMockMvc.basePath = "/users";
 
 		jsonUser = ResourceUtils.getContentFromResource("/json/test-user.json");
+        jsonUserUpdate = ResourceUtils.getContentFromResource("/json/test-userUpdate.json");
 	}
 
     @Test
@@ -99,7 +102,7 @@ public class UserIntegrationTest {
     @Test
     public void shouldReturnStatus200_WhenUpdateUser() {
         given()
-            .body(jsonUser)
+            .body(jsonUserUpdate)
             .contentType(ContentType.JSON)
             .accept(ContentType.JSON)
         .when()
